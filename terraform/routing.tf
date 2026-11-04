@@ -20,7 +20,7 @@ resource "azurerm_route_table" "spoke_udr" {
   # 2. Azure Platform Bypass: the WireServer/host endpoint every Windows VM
   #    talks to for extensions, the Guest Agent, DHCP lease renewal, and
   #    activation checks. This is the one Microsoft's own forced-tunneling
-  #    docs call out explicitly — without it, VM extensions and Windows
+  #    docs call out explicitly. Without it, VM extensions and Windows
   #    Activation break the moment traffic is forced through the firewall.
   route {
     name           = "bypass-azure-wireserver"
@@ -28,11 +28,25 @@ resource "azurerm_route_table" "spoke_udr" {
     next_hop_type  = "Internet"
   }
 
-  # 3. KMS Bypass: literal Windows Activation KMS endpoint, kept alongside
-  #    the WireServer bypass above (some older Windows Server builds still
-  #    activate against this address directly rather than via WireServer).
+  # 3. KMS Bypass: Windows activation (TCP 1688) must reach Azure KMS from an
+  #    Azure public IP. Since October 2022 azkms.core.windows.net resolves to
+  #    20.118.99.224 and 40.83.235.53; 23.102.135.246 is kept for images that
+  #    still target kms.core.windows.net. Source:
+  #    https://learn.microsoft.com/troubleshoot/azure/virtual-machines/windows/custom-routes-enable-kms-activation
   route {
-    name           = "bypass-azure-kms"
+    name           = "bypass-azure-kms-1"
+    address_prefix = "20.118.99.224/32"
+    next_hop_type  = "Internet"
+  }
+
+  route {
+    name           = "bypass-azure-kms-2"
+    address_prefix = "40.83.235.53/32"
+    next_hop_type  = "Internet"
+  }
+
+  route {
+    name           = "bypass-azure-kms-legacy"
     address_prefix = "23.102.135.246/32"
     next_hop_type  = "Internet"
   }

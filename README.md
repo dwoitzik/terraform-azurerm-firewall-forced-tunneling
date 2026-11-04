@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/dwoitzik/terraform-azurerm-firewall-forced-tunneling/actions/workflows/tf-linter.yml/badge.svg)](https://github.com/dwoitzik/terraform-azurerm-firewall-forced-tunneling/actions/workflows/tf-linter.yml)
 
-> **Status: v0.1.0 — pre-1.0.** CI runs `terraform fmt`, `validate`, and `tflint` on every push, but this has never been through `terraform plan`/`apply` against a real Azure subscription. That proves syntax, not that it works. The multi-spoke `for_each` subnet binding in particular (`terraform/main.tf`, `terraform/routing.tf`) is brand new and has zero real-world runs behind it. Reaching 1.0 needs a real plan-and-apply pass, which needs the operator (an Azure subscription, credentials, and someone watching the apply).
+> **Status: v0.1.0, pre-1.0.** CI runs `terraform fmt`, `validate`, and `tflint` on every push, but this has never been through `terraform plan`/`apply` against a real Azure subscription. That proves syntax, not that it works. The multi-spoke `for_each` subnet binding in particular (`terraform/main.tf`, `terraform/routing.tf`) is brand new and has zero real-world runs behind it. Reaching 1.0 needs a real plan-and-apply pass, which needs the operator (an Azure subscription, credentials, and someone watching the apply).
 
 A minimal, targeted Infrastructure as Code (IaC) template demonstrating how to implement Azure Firewall Forced Tunneling (`0.0.0.0/0`) while completely avoiding the infamous **Terraform Circular Dependency (Cycle Error)**.
 
@@ -25,12 +25,12 @@ When assigning a Route Table to a Spoke Subnet that points to an Azure Firewall'
 
 ## 🚀 Features
 
-- **Cycle Error Resolution** — Code structured to naturally resolve the UDR vs. Firewall IP dependency graph.
-- **Forced Tunneling UDR** — Standard `0.0.0.0/0` route pointing to the Virtual Appliance.
-- **KMS & Azure AD Bypasses** — Pre-built UDR injections so Windows activation and Entra ID auth keep working under forced tunneling.
-- **Dynamic IP Groups** — Spoke CIDRs feed an `azurerm_ip_group`, so firewall policy rules scale without hardcoding IPs.
-- **FQDN Application Policies** — Pre-configured rule collection for Windows Update and core Microsoft endpoints, ready to extend.
-- **Parametrized Inputs** — Clean `variables.tf` to avoid hardcoded environments.
+- **Cycle Error Resolution**: Code structured to naturally resolve the UDR vs. Firewall IP dependency graph.
+- **Forced Tunneling UDR**: Standard `0.0.0.0/0` route pointing to the Virtual Appliance.
+- **KMS & Azure AD Bypasses**: Pre-built UDRs (all three Azure KMS IPs plus Entra ID) so Windows activation and Entra ID auth keep working under forced tunneling.
+- **Dynamic IP Groups**: Spoke CIDRs feed an `azurerm_ip_group`, so firewall policy rules scale without hardcoding IPs.
+- **FQDN Application Policies**: Pre-configured rule collection for Windows Update and core Microsoft endpoints, ready to extend.
+- **Parametrized Inputs**: Clean `variables.tf` to avoid hardcoded environments.
 
 ## 🛠️ Prerequisites
 
@@ -84,13 +84,13 @@ terraform plan
 
 ## ⚠️ Known Limitations
 
-Forced tunneling still means every packet leaving a spoke subnet hits this firewall — that's the point, but it's also a single point of failure and a real cost (~$1.25/hour for the firewall itself). The KMS and Azure AD bypasses cover the two most common lockout scenarios; if you add other PaaS services behind this firewall, check whether they need their own bypass route or an FQDN rule before relying on it in production.
+Forced tunneling still means every packet leaving a spoke subnet hits this firewall. That's the point, but it's also a single point of failure and a real cost (~$1.25/hour for the firewall itself). The KMS and Azure AD bypasses cover the two most common lockout scenarios; if you add other PaaS services behind this firewall, check whether they need their own bypass route or an FQDN rule before relying on it in production.
 
 ---
 
 ## 📖 Deep Dive
 
-Read the full technical breakdown — cycle error root cause, KMS and Azure AD bypass routes, and dynamic IP Group design explained:
+Read the full technical breakdown (cycle error root cause, KMS and Azure AD bypass routes, dynamic IP Group design):
 
 **[Azure Firewall Forced Tunneling: Solving the Cycle Error →](https://woitzik.dev/blog/azure-firewall-cycle-error)**
 
@@ -98,6 +98,6 @@ Read the full technical breakdown — cycle error root cause, KMS and Azure AD b
 
 ## 📄 License
 
-MIT — free to use, modify, and distribute.
+MIT. Free to use, modify, and distribute.
 
 *Built by [David Woitzik](https://woitzik.dev) · [LinkedIn](https://linkedin.com/in/david-woitzik)*

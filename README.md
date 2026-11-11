@@ -23,7 +23,7 @@ When assigning a Route Table to a Spoke Subnet that points to an Azure Firewall'
                         └──────────────────────────┘
 ```
 
-## 🚀 Features
+## Features
 
 - **Cycle Error Resolution**: Code structured to naturally resolve the UDR vs. Firewall IP dependency graph.
 - **Forced Tunneling UDR**: Standard `0.0.0.0/0` route pointing to the Virtual Appliance.
@@ -32,13 +32,13 @@ When assigning a Route Table to a Spoke Subnet that points to an Azure Firewall'
 - **FQDN Application Policies**: Pre-configured rule collection for Windows Update and core Microsoft endpoints, ready to extend.
 - **Parametrized Inputs**: Clean `variables.tf` to avoid hardcoded environments.
 
-## 🛠️ Prerequisites
+## Prerequisites
 
 - Terraform `>= 1.5.0`
 - Azure CLI (`az login`)
 - An active Azure Subscription
 
-## 📖 Usage
+## Usage
 
 **1. Clone the repository**
 
@@ -68,7 +68,7 @@ terraform plan
 # terraform apply
 ```
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```text
 .
@@ -82,21 +82,21 @@ terraform plan
 └── README.md
 ```
 
-## ⚠️ Known Limitations
+## Known Limitations
 
 Forced tunneling still means every packet leaving a spoke subnet hits this firewall. That's the point, but it's also a single point of failure and a real cost (~$1.25/hour for the firewall itself). The KMS and Azure AD bypasses cover the two most common lockout scenarios; if you add other PaaS services behind this firewall, check whether they need their own bypass route or an FQDN rule before relying on it in production.
 
 ---
 
-## 📖 Deep Dive
+## Write-up
 
 Read the full technical breakdown (cycle error root cause, KMS and Azure AD bypass routes, dynamic IP Group design):
 
-**[Azure Firewall Forced Tunneling: Solving the Cycle Error →](https://woitzik.dev/blog/azure-firewall-cycle-error)**
+**[Azure Firewall Forced Tunneling: Solving the Cycle Error →](https://woitzik.dev/blog/azure-firewall-cycle-error/)**
 
 ---
 
-## 📄 License
+## License
 
 MIT. Free to use, modify, and distribute.
 

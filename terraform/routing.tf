@@ -29,9 +29,12 @@ resource "azurerm_route_table" "spoke_udr" {
   }
 
   # 3. KMS Bypass: Windows activation (TCP 1688) must reach Azure KMS from an
-  #    Azure public IP. Since October 2022 azkms.core.windows.net resolves to
-  #    20.118.99.224 and 40.83.235.53; 23.102.135.246 is kept for images that
-  #    still target kms.core.windows.net. Source:
+  #    Azure public IP. azkms.core.windows.net moved to 20.118.99.224 and
+  #    40.83.235.53 on 2022-10-03, and kms.core.windows.net has resolved to
+  #    20.118.99.224 since 2023-03-01. Microsoft says 23.102.135.246 is no
+  #    longer used and its route can be removed; it stays here only so that
+  #    upgrading the module does not change existing route tables, and will be
+  #    dropped in the next major version. Source:
   #    https://learn.microsoft.com/troubleshoot/azure/virtual-machines/windows/custom-routes-enable-kms-activation
   route {
     name           = "bypass-azure-kms-1"
